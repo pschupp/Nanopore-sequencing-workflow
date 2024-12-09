@@ -1,17 +1,23 @@
-path="/Users/Patrick/Downloads/" # don't forget final "/"
-file="cas_guides.csv"
-wpath=paste(path, file, sep="")
-barcodes=read.table(wpath, sep=",")
-b.mat=matrix(dim(barcodes)[1]*2, ncol=1)
+import pandas as pd
+import numpy as np
 
-even=seq(2, dim(barcodes)[1]*2, by=2)
-odd=seq(1,dim(barcodes)[1]*2, by=2)
+path = "/Users/Patrick/Downloads/"  # don't forget final "/"
+file = "cas_guides.csv"
+wpath = path + file
+barcodes = pd.read_csv(wpath, sep=",", header=None)
 
-names=barcodes[,1]
-names=unlist(lapply(names, function(x)  paste(">", x, sep="")))
-b.mat[odd]=names
+b_mat = np.empty((barcodes.shape[0] * 2, 1), dtype=object)
 
-seq=as.character(barcodes[,2])
-b.mat[even]=seq
+even = np.arange(2, barcodes.shape[0] * 2 + 1, 2)
+odd = np.arange(1, barcodes.shape[0] * 2 + 1, 2)
 
-write.table(b.mat, file=paste(path, "singe_cell_barcodes.fasta", sep=""), row.names=F, col.names=F, quote=FALSE)
+names = barcodes.iloc[:, 0].apply(lambda x: f">{x}").tolist()
+b_mat[odd - 1] = names  # Adjust for 0-based indexing
+
+seq = barcodes.iloc[:, 1].astype(str).tolist()
+b_mat[even - 1] = seq  # Adjust for 0-based indexing
+
+output_path = path + "singe_cell_barcodes.fasta"
+np.savetxt(output_path, b_mat, fmt='%s', delimiter=',', header='', comments='')
+
+
