@@ -1,0 +1,1 @@
+read_fast5_basecaller.py --flowcell FLO-MIN106 --kit SQK-PCS108 --input /home/patrick/Single_Cell_Run/read_combo --save_path /home/patrick/Single_Cell_Run/read_combo/basecalled --worker_threads 16 -o fast5,fastq -q 0
